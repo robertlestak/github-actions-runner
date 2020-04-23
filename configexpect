@@ -1,0 +1,23 @@
+#!/usr/bin/expect -f
+
+set timeout -1
+
+# ./config.sh --url https://github.com/$REPO_OWNER/$REPO_NAME --token $GITHUB_ACTIONS_TOKEN
+
+spawn ./config.sh --url https://github.com/$env(REPO_OWNER)/$env(REPO_NAME) --token $env(GITHUB_ACTIONS_TOKEN)
+
+expect "Enter the name of runner*"
+
+send -- "\r"
+
+expect "Enter any additional labels*"
+
+send -- "\r"
+
+expect "Enter name of work folder*"
+
+send -- "\r"
+
+expect "*Settings Saved."
+
+send -- "echo done\r"

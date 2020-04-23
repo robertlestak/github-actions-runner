@@ -1,0 +1,23 @@
+#!/bin/bash
+
+function cleanup {
+  RUNNER_ID=$(curl -H "Authorization: token $GITHUB_TOKEN" \
+    https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/actions/runners | \
+  jq -r ".runners[] | select(.name==\"$(hostname)\") | .id")
+
+  curl -H "Authorization: token $GITHUB_TOKEN" \
+    -X DELETE \
+    https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/actions/runners/$RUNNER_ID
+}
+
+trap cleanup EXIT
+
+export GITHUB_ACTIONS_TOKEN=$(curl -X POST -H "Authorization: token $GITHUB_TOKEN" \
+  https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/actions/runners/registration-token | \
+  jq -r '.token')
+
+cleanup
+
+./configexpect
+
+./run.sh

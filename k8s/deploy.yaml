@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: github-actions-runner
+  namespace: devops
+  labels:
+    app: github-actions-runner
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: github-actions-runner
+  template:
+    metadata:
+      labels:
+        app: github-actions-runner
+    spec:
+      containers:
+      - name: github-actions-runner
+        image: docker-registry.example.com/devops/github-actions-runner
+        resources:
+          limits:
+            memory: 1Gi
+            cpu: 1000m
+          requests:
+            memory: 1Gi
+            cpu: 1000m
+        envFrom:
+        - secretRef:
+            name: github-actions-runner
+      imagePullSecrets:
+      - name: regcred
